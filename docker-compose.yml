@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: counter-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: counter-app
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: counter-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongodb
+    environment:
+      PORT: 3001
+      MONGODB_URI: mongodb://mongodb:27017/counter-app
+      NODE_ENV: production
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+
+volumes:
+  mongodb_data:

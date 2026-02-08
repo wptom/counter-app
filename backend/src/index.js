@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const connectDB = require('./config/database');
+const { initDB } = require('./config/database');
 const counterRoutes = require('./routes/counter');
 
 const app = express();
@@ -13,8 +13,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Connect to MongoDB
-connectDB();
+// Initialize database
+initDB();
 
 // Routes
 app.use('/api/counter', counterRoutes);

@@ -1,28 +1,32 @@
-const mongoose = require('mongoose');
+const { pool } = require('../config/database');
 
-const counterSchema = new mongoose.Schema({
-  _id: {
-    type: String,
-    default: 'main'
-  },
-  value: {
-    type: Number,
-    default: 0,
-    required: true
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
+class Counter {
+  // Získat aktuální hodnotu počítadla
+  static async getCounter() {
+    const result = await pool.query(
+      'SELECT value FROM counter WHERE id = $1',
+      ['main']
+    );
+    return result.rows[0];
   }
-}, { _id: false });
 
-// Vždy používáme jeden counter s ID 'main'
-counterSchema.statics.getCounter = async function() {
-  let counter = await this.findOne({ _id: 'main' });
-  if (!counter) {
-    counter = await this.create({ _id: 'main', value: 0 });
+  // Zvýšit počítadlo
+  static async increment() {
+    const result = await pool.query(
+      'UPDATE counter SET value = value + 1, updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING value',
+      ['main']
+    );
+    return result.rows[0];
   }
-  return counter;
-};
 
-module.exports = mongoose.model('Counter', counterSchema);
+  // Snížit počítadlo
+  static async decrement() {
+    const result = await pool.query(
+      'UPDATE counter SET value = value - 1, updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING value',
+      ['main']
+    );
+    return result.rows[0];
+  }
+}
+
+module.exports = Counter;

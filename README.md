@@ -1,6 +1,6 @@
 # Counter App
 
-Jednoduchá aplikace počítadla s Next.js frontendem a Node.js backendem s MongoDB databází.
+Jednoduchá aplikace počítadla s Next.js frontendem a Node.js backendem s MongoDB databází. 
 
 ## 📁 Struktura projektu
 
